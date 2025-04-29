@@ -15,7 +15,7 @@ func main() {
 	logg.SetPrefix("/cmd/main/main.go ")
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", withFullRequestLoging(mainPage))
+	mux.HandleFunc("/", withFullRequestLoging(withFullResponseLoging(mainPage)))
 
 	err = http.ListenAndServe("localhost:8080", mux)
 	if err != nil {
@@ -66,28 +66,26 @@ func withFullRequestLoging(h http.HandlerFunc) http.HandlerFunc {
 			"\nr.URL: ", r.URL)
 	}
 }
-func withFullResponseLoging(h http.HandlerFunc) http.HandlerFunc{
+func withFullResponseLoging(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.ServeHTTP(w,r)
-		
+		h.ServeHTTP(w, r)
+
 		log.Printf(" request loging: ",
-		"\n w.Header func: ",w.Header())
+			"\n w.Header func: ", w.Header())
 		log.Printf("\n w.Write func: ")
 		w.Write([]byte("Some slice Byte fn write"))
 		log.Println("\n w.WriteHeader func: ")
 		w.WriteHeader(1234)
 
 		log.Println("\n w.Header.Add func: ")
-		w.Header().Add()
+		w.Header().Add("key string?", "value?")
 
 		log.Println("\n w.Header().Clone() func: ")
 		w.Header().Clone()
 
 		log.Println("\n w.Header().Del() func: ")
-		w.Header().Del(),
+		w.Header().Del("key string?")
 
 	}
 
-
 }
-
