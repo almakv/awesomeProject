@@ -1,27 +1,39 @@
 package main
 
 import (
-	"fmt"
+	"awesomeProject/internal/logger"
+	"log"
 	"net/http"
+	"time"
 )
 
+var logg *log.Logger
+var err error
+
 func main() {
-	var err error
-	//TO DO: log
-	//TO DO: routing
-	//TO DO: handlers
-
+	logg = logger.LogLoad()
+	logg.SetPrefix("/cmd/main/main.go ")
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", mainPage)
-
+	mux.HandleFunc("/", withLoging(mainPage))
 	err = http.ListenAndServe("localhost:8080", mux)
 	if err != nil {
-		fmt.Printf("server start err%+v\n", err)
+		logg.Fatalln("server init error")
 	}
-
 }
-
 func mainPage(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("hrelloo"))
-	fmt.Println(r.RequestURI)
+	if r.Method == "GET" {
+	}
+}
+func withLoging(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		logg.SetPrefix("\n/cmd/main.go fn handler ")
+		start := time.Now()
+
+		h.ServeHTTP(w, r)
+
+		duration := time.Since(start).Microseconds()
+		logg.Println("\nmethod", r.Method, "\nt: ", duration, "millisec\n", "transEnc", r.TransferEncoding)
+		logg.
+	}
 }

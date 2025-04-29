@@ -1,10 +1,12 @@
 package logger
 
-import "log/slog"
+import (
+	"log"
+	"log/slog"
+)
 
-type logg struct {
-	loggg *slog.Logger
-}
-
-func LogLoad() {
+func LogLoad() *log.Logger {
+	Mlogg := slog.NewLogLogger(slog.Default().Handler(), slog.LevelInfo)
+	Mlogg.Println("LoggerMain was created")
+	return Mlogg
 }
